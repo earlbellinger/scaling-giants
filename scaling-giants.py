@@ -41,8 +41,8 @@ P_mass_full = np.array([
       [      0,       0,     0,       0],  #  8
       [      0,       0,     0,       0],  #  9
       [      0,       0,     0,       0]]) # 10
-sigma_sys_M = np.array([0.023, 0.023, 0.023, 0.10, 0.11,  
-                        0.046, 0.15,  0,     0,    0])
+sigma_sys_M = np.array([0.023, 0.023, 0.10, 0.11, 0.046, 
+                        0.15,  0,     0,    0,    0])
 
 # Calibrated exponents from Table 4
 # P = [  alpha,    beta,  gamma,  delta]
