@@ -1,16 +1,9 @@
 import numpy as np 
-from uncertainties import ufloat
+from uncertainties import ufloat 
 from uncertainties.unumpy import isnan 
 from warnings import warn 
 
-# Enter some data for an example red giant whose age we want to estimate 
-# Use ufloat(0,0) for any measurement that is not available
-nu_max   = ufloat( 140.87,   0.83 ) # muHz, second argument is uncertainty 
-Delta_nu = ufloat(  12.715,  0.021) # muHz
-Teff     = ufloat(5054,     95    ) # K
-Fe_H     = ufloat(  -0.6,    0.1  ) # dex
-
-refs = [4.3, 1.33, 6.6] # age [Gyr], mass [solar units], radius [solar units]
+refs = [4.3, 1.33, 6.6] # age [Gyr]; mass [solar masses]; radius [solar radii]
 
 # Calibrated exponents from Table 2
 # P = [   alpha,    beta,  gamma,  delta]
@@ -66,21 +59,30 @@ sigma_sys = np.array([sigma_sys_age, sigma_sys_M, sigma_sys_R])
 
 # Apply the scaling relation. 
 # Returns age, mass, and radius in Gyr, solar masses, and solar radii. 
-def scaling_giants(nu_max, Delta_nu, Teff, Fe_H, 
-        nu_max_ref=104.5, Delta_nu_ref=9.25, Teff_ref=4790, 
-        check_bounds=True, warn_bounds=True, warn_combo=True, star_name=''):
+def scaling_giants(nu_max   = ufloat(0,0), 
+                   Delta_nu = ufloat(0,0), 
+                   Teff     = ufloat(0,0), 
+                   Fe_H     = ufloat(0,0), 
+                   nu_max_ref   =  104.5, 
+                   Delta_nu_ref =    9.25, 
+                   Teff_ref     = 4790, 
+                   check_bounds=True, 
+                   warn_bounds=True, 
+                   warn_combo=True, 
+                   star_name=''):
     
     result = [np.nan, np.nan, np.nan] # nannannannannan batman! 
     
     # check that the data are in bounds 
-    if check_bounds: 
+    if check_bounds or warn_bounds: 
         if (nu_max   != 0 and nu_max   <   27.9  or nu_max   >   255.6  or
             Delta_nu != 0 and Delta_nu <    3.73 or Delta_nu >    17.90 or 
             Teff     != 0 and Teff     < 4520    or Teff     > 5120     or 
             Fe_H     != 0 and Fe_H     <   -1.55 or Fe_H     >     0.50): 
             if warn_bounds:
                 warn("Input data out of range of training data. " + star_name)
-            return result 
+            if check_bounds:
+                return result 
     
     # Determine which row of the table to use by checking which entries are 0
     star = np.array([nu_max!=0, Delta_nu!=0, Teff!=0, Fe_H!=0])
@@ -112,13 +114,62 @@ def scaling_giants(nu_max, Delta_nu, Teff, Fe_H,
     
     return result 
 
-age, mass, radius = scaling_giants(nu_max, Delta_nu, Teff, Fe_H)
+def scaling_printer(age, mass, radius):
+    if not isnan(age):
+        print('Age:', '{:.2u}'.format(age), '[Gyr]')
 
-if not isnan(age):
-    print('Age:', '{:.2u}'.format(age), '[Gyr]')
+    if not isnan(mass):
+        print('Mass:', '{:.2u}'.format(mass), '[solar masses]')
 
-if not isnan(mass):
-    print('Mass:', '{:.2u}'.format(mass), '[solar masses]')
+    if not isnan(radius):
+        print('Radius:', '{:.2u}'.format(radius), '[solar radii]')
 
-if not isnan(radius):
-    print('Radius:', '{:.2u}'.format(radius), '[solar radii]')
+if __name__ == "__main__":
+    import argparse 
+    
+    parser = argparse.ArgumentParser(
+        description="Input data: value and uncertainty.")
+    parser.add_argument('-n', '--nu_max', nargs=2, type=float,
+                        help='frequency at maximum power in microHertz',
+                        default=[0, 0])
+    parser.add_argument('-d', '--Delta_nu', nargs=2, type=float,
+                        help='large frequency separation in microHertz',
+                        default=[0, 0])
+    parser.add_argument('-t', '--Teff', nargs=2, type=float,
+                        help='effective temperature in Kelvin',
+                        default=[0, 0])
+    parser.add_argument('-f', '--Fe_H', nargs=2, type=float,
+                        help='metallicity [Fe/H]',
+                        default=[0, 0])
+    
+    additional = parser.add_argument_group("Additional options")
+    additional.add_argument('-c', '--suppress_check_bounds', default=False,
+        help="don't enforce that inputs are within training data bounds "\
+             "(not recommended)")
+    additional.add_argument('-wb', '--suppress_warn_bounds', default=False, 
+        help="don't raise warning when "\
+             "star is rejected for being out of bounds")
+    additional.add_argument('-wc', '--suppress_warn_combo', default=False, 
+        help="don't raise warning when "\
+             "no applicable scaling variable combo is found")
+    
+    additional.add_argument('-s', '--star_name', default='',
+        help='name of star')
+    
+    args = parser.parse_args()
+    
+    # Enter some data for an example red giant whose age we want to estimate 
+    # First argument to ufloat is value, second argument is uncertainty 
+    # Use ufloat(0,0) for any measurement that is not available7
+    nu_max   = ufloat(args.nu_max[0],   args.nu_max[1])   # muHz
+    Delta_nu = ufloat(args.Delta_nu[0], args.Delta_nu[1]) # muHz
+    Teff     = ufloat(args.Teff[0],     args.Teff[1])     # K
+    Fe_H     = ufloat(args.Fe_H[0],     args.Fe_H[1])     # dex
+    
+    age, mass, radius = scaling_giants(nu_max, Delta_nu, Teff, Fe_H,
+        check_bounds=not args.suppress_check_bounds, 
+        warn_bounds=not args.suppress_warn_bounds, 
+        warn_combo=not args.suppress_warn_combo,
+        star_name=args.star_name)
+    
+    scaling_printer(age, mass, radius)
