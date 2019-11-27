@@ -172,4 +172,4 @@ if __name__ == "__main__":
         warn_combo=not args.suppress_warn_combo,
         star_name=args.star_name)
     
-    scaling_printer(age, mass, radius)
+    scaling_printer(age, mass, radius) 

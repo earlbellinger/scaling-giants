@@ -1,5 +1,5 @@
 import numpy as np 
-from uncertainties import ufloat
+from uncertainties import ufloat 
 
 # Enter some data for an example red giant whose age we want to estimate 
 # Use ufloat(0,0) for any measurement that is not available

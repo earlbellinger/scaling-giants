@@ -1,8 +1,8 @@
 ## A seismic scaling relation for stellar age II: The red giant branch 
 
-[Bellinger, E. P.](https://earlbellinger.com), "A seismic scaling relation for stellar age II: The red giant branch", *MNRAS Letters* submitted. 
+[Bellinger, E. P.](https://earlbellinger.com), "A seismic scaling relation for stellar age II: The red giant branch", *MNRAS Letters* accepted. 
 
-The file `scaling_age.py` is identical to that in Appendix A of that paper. 
+The file `scaling_age.py` is identical to Appendix A of that paper. 
 
 ```
 $ python3 scaling_age.py
@@ -22,7 +22,7 @@ Mass: 1.005+/-0.042 [solar masses]
 Radius: 4.877+/-0.075 [solar radii]
 ```
 
-Some additional functionality is built into the scaling_giants routine. It optionally checks that the star's values are within the ranges of training data (default: `True`), and optionally warns the user when no applicable scaling relation is found (default: `True`). It can be loaded as a library with `from scaling_giants import scaling_giants`. Also, as is evident, it provides a command line interface: 
+Some additional functionality is built into the scaling_giants routine. It optionally checks that the star's values are within the ranges of training data (default: `True`), and optionally warns the user when no applicable scaling relation is found (default: `True`). It can be loaded as a library with `from scaling_giants import scaling_giants`. It also provides a command line interface: 
 
 ```
 $ python3 scaling_giants.py -h
