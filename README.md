@@ -1,6 +1,6 @@
 ## A seismic scaling relation for stellar age II: The red giant branch 
 
-[Bellinger, E. P.](https://earlbellinger.com), "A seismic scaling relation for stellar age II: The red giant branch", *MNRAS Letters* accepted. 
+[Bellinger, E. P.](https://earlbellinger.com), "[A seismic scaling relation for stellar age II: The red giant branch](https://arxiv.org/abs/1911.11804)", *MNRAS Letters* accepted. 
 
 The file `scaling_age.py` is identical to Appendix A of that paper. 
 
